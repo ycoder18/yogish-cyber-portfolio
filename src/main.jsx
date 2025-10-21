@@ -1,69 +1,71 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-// import ReactDOM from 'react-dom/client'; // Eemaldatud: See import põhjustab arenduskeskkonnas vea
 
-// Chart.js on eeldatavasti globaalselt kättesaadav (või installitud package.json kaudu).
+// --- GLOBAL CONSTANTS ---
 
+// Color palette definitions
 const NEON_BLUE = '#4AD9E8';
 const NEON_PURPLE = '#B45FE6';
 const NEON_PINK = '#FF6B8B';
 
+// Contact Handles
+const GITHUB_HANDLE = 'ycoder18';
+const LINKEDIN_HANDLE = 'yogish-bakshi';
+const EMAIL_CONTACT = 'contact@Yogish';
+
 // --- DATA STRUCTURES ---
 
 const NAV_ITEMS = [
-  { id: 'about', label: 'Minust' }, // Minust
-  { id: 'projects', label: 'Projektid' }, // Projektid
-  { id: 'skills', label: 'Oskuste Maatriks' }, // Oskuste Maatriks
-  { id: 'experience', label: 'Töökogemus' }, // Töökogemus
-  { id: 'certifications', label: 'Sertifikaadid' }, // Sertifikaadid
-  { id: 'contact', label: 'Kontakt' }, // Kontakt
+  { id: 'about', label: 'About Me' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'certifications', label: 'Cert. Log' },
+  { id: 'skills', label: 'Skills Matrix' },
+  { id: 'experience', label: 'Timeline Log' },
+  { id: 'contact', label: 'Connection Port' },
 ];
 
 const SKILLS_DATA = {
-  core: ['Python', 'SQL', 'ETL', 'BigQuery', 'ML', 'Tableau'],
+  core: ['Python', 'SQL', 'ETL', 'BigQuery', 'ML', 'Tableau', 'Power BI'],
   languages: [
     { name: 'Python', level: 95, color: NEON_BLUE },
     { name: 'SQL', level: 90, color: NEON_BLUE },
-    { name: 'Tableau/PBI', level: 88, color: NEON_PURPLE },
-    { name: 'ETL/Pipelines', level: 85, color: NEON_PURPLE },
+    { name: 'Pandas/NumPy', level: 88, color: NEON_PURPLE },
+    { name: 'Scikit-Learn', level: 85, color: NEON_PURPLE },
   ],
   tools: [
+    { name: 'Tableau/PBI', level: 88, color: NEON_PINK },
     { name: 'GCP/BigQuery', level: 92, color: NEON_PINK },
-    { name: 'Pandas/NumPy', level: 90, color: NEON_BLUE },
-    { name: 'Scikit-Learn', level: 85, color: NEON_PURPLE },
-    { name: 'Feature Eng.', level: 82, color: NEON_PINK },
+    { name: 'Looker Studio', level: 80, color: NEON_BLUE },
+    { name: 'Feature Eng.', level: 85, color: NEON_PURPLE },
   ]
 };
 
-const GITHUB_HANDLE = 'ycoder18';
-const LINKEDIN_HANDLE = 'yogish-bakshi'; 
-const EMAIL_CONTACT = 'contact@Yogish';
-
-// Custom Icon for Data Warehouse (Server/Database Rack)
 const ServerIcon = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6" y1="6" y2="6"/><line x1="6" x2="6" y1="18" y2="18"/></svg>
 );
 
 const PROJECTS_DATA = [
   {
-    title: 'Healthcare Insurance Premium Prediction',
-    desc: 'Built a predictive machine learning model (Random Forest, XGBoost) on 100k+ records. Developed a Streamlit web app for real-time predictions and visualizations.',
-    tech: 'Python, ML (XGBoost/GBM), Streamlit, EDA',
+    title: 'Healthcare Premium Predictor',
+    desc: 'Built a predictive machine learning model (XGBoost, GBM) on 100k+ records, analyzing factors like BMI and smoking status. Developed a Streamlit app for real-time predictions and visualization.',
+    tech: 'Python, ML (XGBoost, GBM, NN), Streamlit',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 0 0-8 4v7.35a1 1 0 0 0 .5.87l7 4.3a1 1 0 0 0 1 0l7-4.3a1 1 0 0 0 .5-.87V6a10 10 0 0 0-8-4z" /><path d="M12 2v20" /></svg>
     ),
-    link: `https://github.com/${GITHUB_HANDLE}`, 
+    link: `https://github.com/${GITHUB_HANDLE}`,
   },
   {
-    title: 'Data Warehouse / Analytics (SQL Server)',
-    desc: 'Built SQL Server ETL pipelines for ERP/CRM CSV data. Modeled a star schema and performed advanced SQL queries to support executive dashboards and insights.',
+    title: 'Data Warehouse / Analytics',
+    desc: 'Designed and implemented SQL Server ETL pipelines for ERP/CRM data. Successfully modeled a star schema and executed advanced SQL queries to generate insights for executive dashboards.',
     tech: 'SQL Server, ETL, Star Schema, Advanced SQL',
-    icon: <ServerIcon />,
+    icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12h18"/><path d="M3 19h18"/></svg>
+    ),
     link: `https://github.com/${GITHUB_HANDLE}`,
   },
   {
     title: 'Wisdom Pets Digital Transformation',
-    desc: 'Migrated and modeled data in BigQuery. Executed analytical SQL queries, built Looker Studio dashboards, and created business reports to support decision-making.',
-    tech: 'BigQuery, SQL, Looker Studio, GCP',
+    desc: 'Migrated and modeled data in BigQuery for a digital transformation project. Executed analytical SQL and built Looker Studio dashboards for data-driven business reports.',
+    tech: 'BigQuery, SQL, Looker Studio',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" /><path d="M12 20v-9" /><path d="M16 16l-4 4-4-4" /></svg>
     ),
@@ -72,7 +74,7 @@ const PROJECTS_DATA = [
   {
     title: 'Sales Performance Reporting',
     desc: 'Developed SQL Server ETL pipelines and star schema for ERP/CRM data. Delivered Tableau dashboards with sales insights and profitability recommendations.',
-    tech: 'SQL, Tableau, ETL, Excel',
+    tech: 'SQL Server, ETL, Tableau, Excel',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18" /><path d="M18.7 8l-5.1 5.2-2.8-2.7-7.8 7.8" /></svg>
     ),
@@ -80,157 +82,54 @@ const PROJECTS_DATA = [
   },
 ];
 
-// Experience and Education only (Certificates moved to CERTIFICATIONS_DATA)
-const EXPERIENCE_EDUCATION_DATA = [
-    {
-      type: 'Kogemus', // Kogemus
-      title: 'Uurimisanalüütik', // Uurimisanalüütik
-      institution: 'Humanity Pathways Global (Michigan, USA)',
-      time: 'Apr 2025 - Present',
-      desc: 'Viis läbi annetaja/kliendi trendianalüüsi veebipõhiste andmebaaside abil. Lõi Looker Studio armatuurlaudu ja parandas teavitusstrateegiaid.', // Viis läbi annetaja/kliendi trendianalüüsi veebipõhiste andmebaaside abil. Lõi Looker Studio armatuurlaudu ja parandas teavitusstrateegiaid.
-      color: NEON_PINK,
-    },
-    {
-      type: 'Kogemus', // Kogemus
-      title: 'Vabakutseline Andmeanalüütik', // Vabakutseline Andmeanalüütik
-      institution: 'Global Clients (Remote)',
-      time: 'Feb 2022 - Apr 2024',
-      desc: 'Pakkus analüütilisi lahendusi, ehitas automatiseeritud Tableau/Power BI armatuurlaudu ning arendas SQL/Pythoni andmetorusid trendianalüüsiks.', // Pakkus analüütilisi lahendusi, ehitas automatiseeritud Tableau/Power BI armatuurlaudu ning arendas SQL/Pythoni andmetorusid trendianalüüsiks.
-      color: NEON_PURPLE,
-    },
-    {
-      type: 'Kogemus', // Kogemus
-      title: 'Andmeanalüütiku Praktikant', // Andmeanalüütiku Praktikant
-      institution: 'Sarvagya Institute (New Delhi, India)',
-      time: 'Jul 2024 - Sep 2024',
-      desc: 'Puhastas ja teisendas institutsionaalseid andmeid Pythoni/SQL-i abil. Automatiseeris KPI aruandlust Power BI-s strateegiliseks otsustamiseks.', // Puhastas ja teisendas institutsionaalseid andmeid Pythoni/SQL-i abil. Automatiseeris KPI aruandlust Power BI-s strateegiliseks otsustamiseks.
-      color: NEON_BLUE,
-    },
-    {
-      type: 'Akadeemiline', // Akadeemiline
-      title: 'Arvutirakenduste bakalaureus (8.88 GPA)', // Arvutirakenduste bakalaureus (8.88 GPA)
-      institution: 'Guru Gobind Singh Indraprastha University',
-      time: '2022-2025',
-      desc: 'Saavutas silmapaistva akadeemilise tulemuse **8.88 GPA**-ga. Keskendumine arvutirakendustele, tugev alus kodeerimises ja algoritmides.', // Saavutas silmapaistva akadeemilise tulemuse **8.88 GPA**-ga. Keskendumine arvutirakendustele, tugev alus kodeerimises ja algoritmides.
-      color: NEON_BLUE,
-    },
+const CERTIFICATIONS_DATA = [
+  { title: 'Career Essentials in Data Analyst', provider: 'Microsoft & LinkedIn', color: NEON_BLUE },
+  { title: 'Career Essentials in Generative AI', provider: 'Microsoft & LinkedIn', color: NEON_PURPLE },
+  { title: 'Data Science Virtual Internship', provider: 'Quantum, Forage', color: NEON_PINK },
+  { title: 'Data Science Virtual Experience', provider: 'HP', color: NEON_BLUE },
+  { title: 'Data Science Job Simulation', provider: 'British Airways, Forage', color: NEON_PURPLE },
+  { title: 'Advanced SQL', provider: 'HackerRank', color: NEON_PINK },
 ];
 
-const CERTIFICATIONS_DATA = [
-    {
-        title: 'Advanced SQL',
-        issuer: 'HackerRank',
-        desc: 'Näitas eksperttasemel oskusi keeruliste SQL-päringute ja andmebaasi manipuleerimise osas.', // Näitas eksperttasemel oskusi keeruliste SQL-päringute ja andmebaasi manipuleerimise osas.
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 17h-8"/><path d="M21 4H3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="M13 10V4"/></svg>
-        ),
-        color: NEON_BLUE,
-    },
-    {
-        title: 'Career Essentials in Data Analyst',
-        issuer: 'Microsoft & LinkedIn',
-        desc: 'Lõpetas spetsiaalsed moodulid, mis hõlmavad professionaalse andmeanalüütiku rolli jaoks vajalikke põhioskusi ja tööriistu.', // Lõpetas spetsiaalsed moodulid, mis hõlmavad professionaalse andmeanalüütiku rolli jaoks vajalikke põhioskusi ja tööriistu.
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="4"/><path d="M2 17h20"/><path d="M6 13l2 4 4-4 2 4 4-4 2 4"/></svg>
-        ),
-        color: NEON_PURPLE,
-    },
-    {
-        title: 'Career Essentials in Generative AI',
-        issuer: 'Microsoft & LinkedIn',
-        desc: 'Sertifitseeritud generatiivse tehisintellekti alustes ja praktilistes rakendustes.', // Sertifitseeritud generatiivse tehisintellekti alustes ja praktilistes rakendustes.
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="4"/><path d="M2 17h20"/><path d="M6 13l2 4 4-4 2 4 4-4 2 4"/></svg>
-        ),
-        color: NEON_PINK,
-    },
-    {
-        title: 'Data Science Virtual Internship',
-        issuer: 'Quantum, Forage',
-        desc: 'Rakendas andmeteaduse põhimõtteid simuleeritud korporatiivses keskkonnas, keskendudes reaalsetele projektidele.', // Rakendas andmeteaduse põhimõtteid simuleeritud korporatiivses keskkonnas, keskendudes reaalsetele projektidele.
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 0 0-7 7c0 2.8 2.2 5 5 5v5"/><path d="M12 22a7 7 0 0 0 7-7c0-2.8-2.2-5-5-5v-5"/></svg>
-        ),
-        color: NEON_BLUE,
-    },
-    {
-        title: 'Data Science Job Simulation',
-        issuer: 'British Airways, Forage',
-        desc: 'Lõpetas spetsiaalsed töösimulatsioonid, mis hõlmasid andmeanalüüsi ja strateegilist probleemide lahendamist.', // Lõpetas spetsiaalsed töösimulatsioonid, mis hõlmasid andmeanalüüsi ja strateegilist probleemide lahendamist.
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3 7 10 7 10-7 10-7-3-7-10-7-10 7-10 7"/><circle cx="12" cy="12" r="3"/></svg>
-        ),
-        color: NEON_PINK, // Changed color for visual variety
-    },
+const TIMELINE_DATA = [
+  {
+    type: 'Experience',
+    title: 'Research Analyst',
+    institution: 'Humanity Pathways Global',
+    time: 'Apr 2025 - Present',
+    desc: 'Conducted donor and client trend analysis; created Looker Studio dashboards for internal reporting.',
+    color: NEON_PINK,
+  },
+  {
+    type: 'Experience',
+    title: 'Freelance Data Analyst',
+    institution: 'Global Clients (Remote)',
+    time: 'Feb 2022 - Apr 2024',
+    desc: 'Delivered analytics solutions, built automated Tableau/Power BI dashboards, and standardized insight delivery.',
+    color: NEON_PURPLE,
+  },
+  {
+    type: 'Experience',
+    title: 'Data Analyst Intern',
+    institution: 'Sarvagya Institute',
+    time: 'Jul 2024 - Sep 2024',
+    desc: 'Cleaned and transformed institutional data. Automated KPI reporting processes in Power BI.',
+    color: NEON_BLUE,
+  },
+  {
+    type: 'Education',
+    title: 'Bachelor in Computer Application (8.88 GPA)',
+    institution: 'Guru Gobind Singh Indraprastha University',
+    time: '2022-2025',
+    desc: 'Focus on Computer Applications, strong foundation in coding and algorithms.',
+    color: NEON_BLUE,
+  },
 ];
 
 
 // --- UTILITY COMPONENTS & CSS (React, Tailwind, Inline CSS) ---
+// CSS is now defined inside the App component for structural cleanliness.
 
-const customStyles = `
-  /* Define custom fonts, prioritizing sleek sans-serif */
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap');
-
-  .font-orbitron { font-family: 'Orbitron', sans-serif; }
-  .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
-
-  /* Keyframes for the pulsing neon glow effect */
-  @keyframes neon-glow-pulse {
-    0%, 100% {
-      box-shadow: 0 0 5px ${NEON_BLUE}, 0 0 10px ${NEON_PURPLE}, 0 0 15px ${NEON_BLUE};
-    }
-    50% {
-      box-shadow: 0 0 10px ${NEON_PURPLE}, 0 0 20px ${NEON_PINK}, 0 0 30px ${NEON_PURPLE};
-    }
-  }
-
-  /* Keyframes for the code stream background */
-  @keyframes data-stream {
-    from { background-position: 0 0; }
-    to { background-position: -100px -100px; }
-  }
-
-  /* Keyframes for simple up-down float (for AI Assistant) */
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
-  }
-
-  /* Apply glow to text and interactive elements */
-  .text-neon-blue { color: ${NEON_BLUE}; }
-  .text-neon-purple { color: ${NEON_PURPLE}; }
-  .text-neon-pink { color: ${NEON_PINK}; }
-
-  .neon-border {
-    border: 1px solid ${NEON_BLUE};
-    box-shadow: 0 0 5px ${NEON_BLUE};
-    transition: all 0.3s ease;
-  }
-  .neon-border:hover {
-    border-color: ${NEON_PINK};
-    box-shadow: 0 0 15px ${NEON_PINK};
-  }
-
-  .glass-panel {
-    background: rgba(10, 15, 30, 0.6); /* Dark semi-transparent background */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(74, 217, 232, 0.2); /* Neon Blue thin border */
-    border-radius: 12px;
-    transition: all 0.5s ease;
-    animation: neon-glow-pulse 5s infinite alternate; /* Soft pulsing glow */
-  }
-
-  .data-bg {
-    background: #000000;
-    background-image: radial-gradient(circle at 1px 1px, #0f172a 1px, transparent 0),
-                      radial-gradient(circle at 1px 1px, #1e293b 1px, transparent 0);
-    background-size: 10px 10px;
-    background-position: 0 0, 5px 5px;
-    animation: data-stream 60s linear infinite;
-  }
-`;
 
 const GlassPanel = ({ children, className = '' }) => (
   <div className={`glass-panel p-6 sm:p-8 ${className}`}>
@@ -244,7 +143,7 @@ const AIAssistant = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <div
-        className="cursor-pointer p-3 rounded-full bg-neon-purple/80 hover:bg-neon-purple animation duration-300"
+        className="cursor-pointer p-3 rounded-full bg-neon-purple/80 hover:bg-neon-purple transition duration-300"
         onClick={() => setIsOpen(!isOpen)}
         style={{ animation: 'float 3s ease-in-out infinite', boxShadow: '0 0 15px #FF6B8B' }}
       >
@@ -258,12 +157,12 @@ const AIAssistant = () => {
 
       {isOpen && (
         <GlassPanel className="absolute bottom-16 right-0 w-64 p-4 text-sm font-rajdhani border-l-4 border-neon-blue">
-          <p className="text-neon-blue text-sm mb-2 font-bold">AURA: AI Navigaator</p> {/* AI Navigaator */}
+          <p className="text-neon-blue text-sm mb-2 font-bold">AURA: AI Navigator</p>
           <p className="text-gray-200">
-            Konnichiwa! Mina olen **AURA**. Avastame Yogishi andmeuniversumit 🌌. Kuidas saan Sinu päringut aidata? {/* Konnichiwa! Mina olen **AURA**. Avastame Yogishi andmeuniversumit 🌌. Kuidas saan Sinu päringut aidata? */}
+            Konnichiwa! I am **AURA**. Let's explore Yogish’s universe of data and code 🌌. How may I assist your query?
           </p>
           <button className="mt-3 text-xs text-neon-pink hover:underline" onClick={() => setIsOpen(false)}>
-            Sulge Protokoll {/* Sulge Protokoll */}
+            Close Protocol
           </button>
         </GlassPanel>
       )}
@@ -273,10 +172,12 @@ const AIAssistant = () => {
 
 
 // --- CHART INITIALIZATION ---
-// Note: Chart.js global definition is assumed to be available from the environment.
 const useSkillRadarChart = (chartRef) => {
   useEffect(() => {
-    if (!chartRef.current || typeof window.Chart === 'undefined') return;
+    if (!chartRef.current || typeof window.Chart === 'undefined') {
+        console.error("Chart.js not found. Ensure it's loaded in index.html.");
+        return;
+    }
 
     const ctx = chartRef.current.getContext('2d');
 
@@ -284,9 +185,9 @@ const useSkillRadarChart = (chartRef) => {
       labels: SKILLS_DATA.languages.map(s => s.name).concat(SKILLS_DATA.tools.map(s => s.name)),
       datasets: [
         {
-          label: 'Andmeekspertiis (%)', // Andmeekspertiis (%)
+          label: 'Data Expertise (%)',
           data: SKILLS_DATA.languages.map(s => s.level).concat(SKILLS_DATA.tools.map(s => s.level)),
-          backgroundColor: `${NEON_BLUE}40`, // 40 is opacity
+          backgroundColor: `${NEON_BLUE}40`, 
           borderColor: NEON_BLUE,
           pointBackgroundColor: NEON_PINK,
           pointBorderColor: '#0F172A',
@@ -297,7 +198,6 @@ const useSkillRadarChart = (chartRef) => {
       ],
     };
 
-    // Destroy existing chart instance if it exists
     if (chartRef.current.chartInstance) {
         chartRef.current.chartInstance.destroy();
     }
@@ -345,7 +245,6 @@ const App = () => {
   const [activeSection, setActiveSection] = useState('about');
   const chartRef = useRef(null);
 
-  // Custom hook usage for Chart.js initialization
   useSkillRadarChart(chartRef);
 
   const scrollToId = (id) => {
@@ -353,7 +252,6 @@ const App = () => {
     setActiveSection(id);
   };
 
-  // Set up intersection observer for active section detection (for better UX)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -398,33 +296,30 @@ const App = () => {
   const HeroSection = () => (
     <section id="hero" className="relative h-screen flex flex-col justify-center items-center overflow-hidden pt-16 data-bg">
       <div className="absolute inset-0 z-0 opacity-10">
-        {/* Simple Starfield/Particle Background Placeholder */}
-        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: 'url(https://placehold.co/1920x1080/000000/000000?text=)' }} />
+        <div className="w-full h-full bg-cover bg-center" />
       </div>
 
-      {/* Anime Avatar/Silhouette Placeholder */}
       <div className="relative z-10 w-32 h-32 sm:w-48 sm:h-48 mb-6 rounded-full bg-gray-800 border-4 border-neon-purple/50">
         <div className="w-full h-full rounded-full bg-gray-900/90 flex items-center justify-center">
           <span className="font-orbitron text-neon-blue text-4xl sm:text-6xl select-none">YB</span>
         </div>
         <div className="absolute inset-0 rounded-full border-4 border-neon-purple opacity-70 animate-ping-slow"></div>
-        {/* Floating Code Streams Placeholder (SVG/CSS animation) */}
       </div>
 
       <h1 className="font-orbitron text-3xl sm:text-5xl lg:text-7xl font-bold text-center mb-4 leading-tight text-white shadow-lg select-none">
         <span className="text-neon-blue">YOGISH BAKSHI</span>
-        <span className="text-neon-pink text-4xl sm:text-6xl block mt-2">ANDMEUNIVERSUM</span> {/* ANDMEUNIVERSUM */}
+        <span className="text-neon-pink text-4xl sm:text-6xl block mt-2">DATA UNIVERSE</span>
       </h1>
 
       <p className="font-rajdhani text-base sm:text-xl text-gray-300 text-center mb-8 max-w-2xl px-4 select-none">
-        “Andmete muutmine teadmisteks — segades analüütikat ja täpsust.” {/* “Andmete muutmine teadmisteks — segades analüütikat ja täpsust.” */}
+        “Transforming Data into Insight — Blending Analytics, Skills & Strategy.”
       </p>
 
       <button
         onClick={() => scrollToId('about')}
         className="neon-border font-orbitron tracking-wider text-lg px-8 py-3 rounded-full bg-gray-900 text-neon-blue transition duration-500 hover:bg-neon-blue hover:text-gray-900 animate-pulse-slow z-10"
       >
-        [ Alusta Andmete Skaneerimist 🔍 ] {/* Alusta Andmete Skaneerimist */}
+        [ Begin Data Scan 🔍 ]
       </button>
     </section>
   );
@@ -433,17 +328,17 @@ const App = () => {
     <section id="about" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-purple border-b-2 border-neon-blue pb-3 shadow-text-sm">
-          // 01. TUUMPROTSESSOR {/* TUUMPROTSESSOR */}
+          // 01. THE CORE PROCESSOR
         </h2>
         <GlassPanel className="bg-gray-900/70 p-8 sm:p-12 mb-16">
           <p className="font-rajdhani text-lg sm:text-xl text-gray-200 leading-relaxed mb-6">
-            Tervitus, Rändur. Mina olen <strong className="text-neon-blue">Yogish Bakshi</strong>, kogenud **Andmeanalüütik** arenenemas **Andmeteadlaseks**, kellel on 2.2+ aastat vabakutselist kogemust kriitiliste teadmiste pakkumisel e-kaubanduses, farmaatsias ja teenustes. Minu missiooniks on dešifreerida keerukust ja juhtida andmepõhist otsustusprotsessi.
-            Mulle on omane kogenud eksperdi analüütiline täpsus – oskused **SQL**, **Python**, **BigQuery**, **ETL** protsessides ja erinevates **Andmete visualiseerimise** tööriistades. Olen kirglik probleemide lahendamise, toorandmete kaasahaaravateks narratiivideks muutmisel ning tugevate, tõhusate analüütiliste lahenduste arendamisel. {/* Tervitus, Rändur. Mina olen **Yogish Bakshi**, kogenud **Andmeanalüütik** arenenemas **Andmeteadlaseks**, kellel on 2.2+ aastat vabakutselist kogemust kriitiliste teadmiste pakkumisel e-kaubanduses, farmaatsias ja teenustes. Minu missiooniks on dešifreerida keerukust ja juhtida andmepõhist otsustusprotsessi. Mulle on omane kogenud eksperdi analüütiline täpsus – oskused **SQL**, **Python**, **BigQuery**, **ETL** protsessides ja erinevates **Andmete visualiseerimise** tööriistades. Olen kirglik probleemide lahendamise, toorandmete kaasahaaravateks narratiivideks muutmisel ning tugevate, tõhusate analüütiliste lahenduste arendamisel. */}
+            Greetings, Traveler. I am <strong className="text-neon-blue">Yogish Bakshi</strong>, a Data Analyst with 2.2+ years of freelance experience delivering deep insights for clients in e-commerce, pharma, and services. My mission is to decode complexity.
+            I possess the analytical precision of a seasoned professional—skilled in <strong className="text-neon-blue">SQL, Python, BigQuery, Tableau, and Power BI</strong>. I’m passionate about solving problems through data-driven decision-making, turning raw data into compelling narratives and effective strategic action.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <HighlightCard title="Analüütiline Mootor" items={['Probleemide Lahendamine', 'ETL Andmetorud', 'Ennustav Modelleerimine']} color={NEON_BLUE} /> {/* Analüütiline Mootor, Probleemide Lahendamine, ETL Andmetorud, Ennustav Modelleerimine */}
-            <HighlightCard title="Andmearsenali" items={['BigQuery/GCP', 'Tableau/PBI', 'Looker Studio']} color={NEON_PURPLE} /> {/* Andmearsenali */}
-            <HighlightCard title="Tugevused" items={['Visuaalne Aruandlus', 'Tunnuste Arendamine', 'Andmete Puhastamine/Wrangling']} color={NEON_PINK} /> {/* Tugevused, Visuaalne Aruandlus, Tunnuste Arendamine, Andmete Puhastamine/Wrangling */}
+            <HighlightCard title="Analytical Engine" items={['Problem Solving', 'ETL Pipelines', 'Predictive Modeling']} color={NEON_BLUE} />
+            <HighlightCard title="Data Arsenal" items={['BigQuery/GCP', 'Tableau/PBI', 'Looker Studio']} color={NEON_PURPLE} />
+            <HighlightCard title="Methodology Focus" items={['Data Cleaning', 'Feature Engineering', 'Structured Reporting']} color={NEON_PINK} />
           </div>
         </GlassPanel>
         <div className="flex justify-center">
@@ -452,7 +347,7 @@ const App = () => {
             download="Yogish_Bakshi_CV_Protocol.pdf"
             className="neon-border font-orbitron tracking-wider px-8 py-3 rounded-full bg-gray-900 text-neon-pink transition duration-500 hover:bg-neon-pink hover:text-gray-900"
           >
-            [ Lae CV Protokoll Alla 📄 ] {/* Lae CV Protokoll Alla */}
+            [ Download CV Protocol 📄 ]
           </a>
         </div>
       </div>
@@ -476,7 +371,7 @@ const App = () => {
     <section id="projects" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-blue border-b-2 border-neon-pink pb-3 shadow-text-sm">
-          // 02. KOODIMAATRIKS {/* KOODIMAATRIKS */}
+          // 02. THE CODE MATRIX
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {PROJECTS_DATA.map((project, index) => (
@@ -485,10 +380,12 @@ const App = () => {
         </div>
         <div className="flex justify-center mt-12">
           <a
-            href="#"
+            href={`https://github.com/${GITHUB_HANDLE}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="neon-border font-orbitron tracking-wider px-8 py-3 rounded-full bg-gray-900 text-neon-purple transition duration-500 hover:bg-neon-purple hover:text-gray-900"
           >
-            [ Uuri Kõiki Andmelogisid 💾 ] {/* Uuri Kõiki Andmelogisid */}
+            [ Explore All Data Logs 💾 ]
           </a>
         </div>
       </div>
@@ -496,7 +393,6 @@ const App = () => {
   );
 
   const ProjectCard = ({ project, index }) => {
-    // Adjusted color assignment for 4 projects
     const colors = [NEON_BLUE, NEON_PURPLE, NEON_PINK, NEON_BLUE];
     const color = colors[index % colors.length];
 
@@ -513,7 +409,7 @@ const App = () => {
         </div>
         <p className="font-rajdhani text-gray-300 mb-4">{project.desc}</p>
         <div className="text-sm font-rajdhani mb-4">
-          <strong className="text-gray-400">Tehnoloogiapakk:</strong> <span className="text-neon-blue">{project.tech}</span> {/* Tehnoloogiapakk: */}
+          <strong className="text-gray-400">Tech Stack:</strong> <span className="text-neon-blue">{project.tech}</span>
         </div>
         <a
           href={project.link}
@@ -521,7 +417,7 @@ const App = () => {
           rel="noopener noreferrer"
           className="inline-flex items-center text-neon-pink font-semibold hover:text-neon-purple transition duration-300"
         >
-          Vaata Mudelit ja Koodi {/* Vaata Mudelit ja Koodi */}
+          View Code Protocol
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.74 1.74" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.74-1.74" />
           </svg>
@@ -530,58 +426,86 @@ const App = () => {
     );
   };
 
-  const Skills = () => (
-    <section id="skills" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
+  const Certifications = () => (
+    <section id="certifications" className="data-bg py-20 px-4 sm:px-8 lg:px-16 pt-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-pink border-b-2 border-neon-purple pb-3 shadow-text-sm">
-          // 03. OSKUSTE MAATRIKS {/* OSKUSTE MAATRIKS */}
+          // 03. CERTIFICATION LOG
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Left: Skill Radar Chart (Holographic Effect) */}
-          <GlassPanel className="lg:col-span-2 h-96 lg:h-auto flex items-center justify-center relative">
-            <div className="absolute inset-0 z-0 rounded-xl" style={{ boxShadow: `0 0 20px ${NEON_BLUE}60, inset 0 0 10px ${NEON_PURPLE}60` }}></div>
-            <div className="w-full h-full relative z-10 p-2">
-              <canvas ref={chartRef} id="skill-radar" className="w-full h-full"></canvas>
-            </div>
-          </GlassPanel>
-
-          {/* Right: Core Skills & Proficiency Bars */}
-          <div className="lg:col-span-1 space-y-8">
-            <GlassPanel className="p-6">
-              <h3 className="font-orbitron text-xl text-neon-blue mb-4">ANDME PÕHILOGID</h3> {/* ANDME PÕHILOGID */}
-              <div className="flex flex-wrap gap-3">
-                {SKILLS_DATA.core.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="font-rajdhani text-sm px-3 py-1 rounded-full text-gray-900 font-semibold transition duration-300 hover:scale-105"
-                    style={{ backgroundColor: index % 3 === 0 ? NEON_BLUE : index % 3 === 1 ? NEON_PURPLE : NEON_PINK, boxShadow: `0 0 8px ${NEON_PINK}40` }}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </GlassPanel>
-
-            <GlassPanel className="p-6">
-              <h3 className="font-orbitron text-xl text-neon-purple mb-4">PEHMETE OSKUSTE PROTOKOLLID</h3> {/* PEHMETE OSKUSTE PROTOKOLLID */}
-              {['Probleemide Lahendamine', 'Analüütiline Mõtlemine', 'Suhtlemine', 'Aja Juhtimine'].map((skill, index) => ( // Probleemide Lahendamine, Analüütiline Mõtlemine, Suhtlemine, Aja Juhtimine
-                <div key={index} className="mb-4">
-                  <p className="font-rajdhani text-sm text-gray-300 mb-1">{skill}</p>
-                  <div className="h-2 rounded-full bg-gray-700 overflow-hidden">
-                    {/* Simple animated bar fill */}
-                    <div
-                      className="h-full bg-neon-pink"
-                      style={{ width: `${90 - index * 5}%`, boxShadow: `0 0 5px ${NEON_PINK}`, animation: 'bar-fill 2s ease-out forwards' }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </GlassPanel>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {CERTIFICATIONS_DATA.map((cert, index) => (
+            <CertCard key={index} cert={cert} />
+          ))}
         </div>
       </div>
     </section>
   );
+
+  const CertCard = ({ cert }) => (
+    <GlassPanel
+      className="p-5 flex flex-col justify-between transform transition duration-300 hover:translate-y-[-4px]"
+      style={{ animation: 'none', borderTop: `4px solid ${cert.color}` }}
+    >
+      <h3 className="font-orbitron text-lg font-semibold" style={{ color: cert.color }}>
+        {cert.title}
+      </h3>
+      <p className="font-rajdhani text-sm text-gray-400 mt-2">
+        <strong className="text-gray-300">Provider:</strong> {cert.provider}
+      </p>
+    </GlassPanel>
+  );
+
+  const Skills = () => {
+    return (
+      <section id="skills" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-pink border-b-2 border-neon-purple pb-3 shadow-text-sm">
+            // 04. SKILLS MATRIX
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <GlassPanel className="lg:col-span-2 h-96 lg:h-auto flex items-center justify-center relative">
+              <div className="absolute inset-0 z-0 rounded-xl" style={{ boxShadow: `0 0 20px ${NEON_BLUE}60, inset 0 0 10px ${NEON_PURPLE}60` }}></div>
+              <div className="w-full h-full relative z-10 p-2">
+                <canvas ref={chartRef} id="skill-radar" className="w-full h-full"></canvas>
+              </div>
+            </GlassPanel>
+
+            <div className="lg:col-span-1 space-y-8">
+              <GlassPanel className="p-6">
+                <h3 className="font-orbitron text-xl text-neon-blue mb-4">CORE DATA LOGS</h3>
+                <div className="flex flex-wrap gap-3">
+                  {SKILLS_DATA.core.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="font-rajdhani text-sm px-3 py-1 rounded-full text-gray-900 font-semibold transition duration-300 hover:scale-105"
+                      style={{ backgroundColor: index % 3 === 0 ? NEON_BLUE : index % 3 === 1 ? NEON_PURPLE : NEON_PINK, boxShadow: `0 0 8px ${NEON_PINK}40` }}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </GlassPanel>
+
+              <GlassPanel className="p-6">
+                <h3 className="font-orbitron text-xl text-neon-purple mb-4">SOFT SKILL PROTOCOLS</h3>
+                {['Problem Solving', 'Analytical Thinking', 'Communication', 'Teamwork'].map((skill, index) => (
+                  <div key={index} className="mb-4">
+                    <p className="font-rajdhani text-sm text-gray-300 mb-1">{skill}</p>
+                    <div className="h-2 rounded-full bg-gray-700 overflow-hidden">
+                      <div
+                        className="h-full bg-neon-pink"
+                        style={{ width: `${90 - index * 5}%`, boxShadow: `0 0 5px ${NEON_PINK}`, animation: 'bar-fill 2s ease-out forwards' }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </GlassPanel>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
 
   const TimelineCard = ({ data, isOdd }) => (
     <div
@@ -592,7 +516,7 @@ const App = () => {
         '--pulse-color': data.color + '80',
       }}
     >
-      <div className={`hidden md:flex w-1/2`}></div> {/* Spacer for timeline line */}
+      <div className={`hidden md:flex w-1/2`}></div> 
 
       <div className={`md:absolute w-full md:w-1/2 ${isOdd ? 'md:left-0' : 'md:right-0'}`}>
         <GlassPanel
@@ -606,7 +530,6 @@ const App = () => {
         </GlassPanel>
       </div>
 
-      {/* Timeline Dot (Pulse) - Absolute positioning */}
       <div
         className={`absolute top-0 w-4 h-4 rounded-full border-2 transform -translate-x-1/2 ${isOdd ? 'md:left-[50%]' : 'md:left-[50%]'}`}
         style={{ left: isOdd ? '1rem' : 'calc(50% + 1rem)', backgroundColor: data.color, borderColor: data.color, boxShadow: `0 0 15px var(--pulse-color)`, zIndex: 20 }}
@@ -621,11 +544,11 @@ const App = () => {
     <section id="experience" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-orbitron text-4xl font-bold mb-16 text-center text-neon-purple border-b-2 border-neon-blue pb-3 shadow-text-sm">
-          // 04. KOGEMUSTE JA HARIDUSE LOGI {/* KOGEMUSTE JA HARIDUSE LOGI */}
+          // 05. TEMPORAL TIMELINE LOG
         </h2>
 
         <div className="relative border-l-2 border-dashed mx-auto md:mx-0 w-0 md:w-full" style={{ borderColor: NEON_BLUE }}>
-          {EXPERIENCE_EDUCATION_DATA.map((item, index) => (
+          {TIMELINE_DATA.map((item, index) => (
             <TimelineCard key={index} data={item} isOdd={index % 2 === 0} />
           ))}
         </div>
@@ -634,47 +557,14 @@ const App = () => {
     </section>
   );
 
-  const Certifications = () => (
-    <section id="certifications" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen pt-20">
-        <div className="max-w-6xl mx-auto">
-            <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-pink border-b-2 border-neon-purple pb-3 shadow-text-sm">
-                // 05. SERTIFIKAATIDE ARHIIV {/* SERTIFIKAATIDE ARHIIV */}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-                {CERTIFICATIONS_DATA.map((cert, index) => (
-                    <GlassPanel
-                        key={index}
-                        className="p-6 transition duration-500 hover:scale-[1.03]"
-                        style={{ animation: 'none', borderLeftColor: cert.color, borderLeftWidth: '4px' }}
-                    >
-                        <div className="flex items-start">
-                            <div className="p-3 mr-4 rounded-full" style={{ backgroundColor: `${cert.color}40`, boxShadow: `0 0 8px ${cert.color}60` }}>
-                                {React.cloneElement(cert.icon, { stroke: cert.color })}
-                            </div>
-                            <div>
-                                <h3 className="font-orbitron text-xl font-semibold mb-1" style={{ color: cert.color }}>{cert.title}</h3>
-                                <p className="font-rajdhani text-gray-400 text-sm mb-3">Väljaandja: {cert.issuer}</p> {/* Väljaandja: */}
-                            </div>
-                        </div>
-                        <p className="font-rajdhani text-gray-300 text-sm">{cert.desc}</p>
-                    </GlassPanel>
-                ))}
-            </div>
-        </div>
-    </section>
-  );
-
   const Contact = () => {
-    // Define external URLs and Email Constant
-    const GITHUB_URL = `https://github.com/${GITHUB_HANDLE}`;
-    const LINKEDIN_URL = `https://linkedin.com/in/${LINKEDIN_HANDLE}`;
     const EMAIL_ADDRESS = EMAIL_CONTACT;
 
     const Alert = ({ message, type }) => {
         const bgColor = type === 'success' ? 'bg-neon-blue' : 'bg-neon-pink';
         const borderColor = type === 'success' ? NEON_BLUE : NEON_PINK;
         return (
-            <div className={`fixed top-20 right-4 p-4 rounded-lg font-rajdhani text-gray-900 font-bold z-50 transition-transform duration-300 transform translate-x-0 ${bgColor}`}
+            <div className={`p-4 rounded-lg font-rajdhani text-gray-900 font-bold mt-4 ${bgColor}`}
                 style={{border: `2px solid ${borderColor}`, boxShadow: `0 0 10px ${borderColor}`}}>
                 {message}
             </div>
@@ -687,26 +577,33 @@ const App = () => {
         setTimeout(() => setMessage(null), 3000);
     };
 
-    const handleCopyEmail = () => {
+    const handleCopyEmail = (e) => {
+        e.preventDefault();
+        const email = EMAIL_ADDRESS;
         const tempInput = document.createElement('input');
-        tempInput.value = EMAIL_ADDRESS;
+        tempInput.value = email;
         document.body.appendChild(tempInput);
         tempInput.select();
-        document.execCommand('copy');
+        try {
+            document.execCommand('copy');
+            showMessage('Email ID copied! Initiating secure communication protocol.', 'success');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showMessage('Failed to copy. Please copy manually: contact@Yogish', 'error');
+        }
         document.body.removeChild(tempInput);
-        showMessage('E-posti aadress kopeeritud! Käivitamine turvalise sideprotokolli.', 'success'); // E-posti aadress kopeeritud! Käivitamine turvalise sideprotokolli.
     };
 
 
     const ContactIcon = ({ Icon, label, link, action }) => (
       <a
         href={link}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={action ? '_self' : '_blank'}
+        rel={action ? '' : 'noopener noreferrer'}
         onClick={action}
-        className="flex flex-col items-center p-4 transition duration-300 transform hover:scale-110 cursor-pointer"
+        className="flex flex-col items-center p-4 transition duration-300 transform hover:scale-110 cursor-pointer group"
       >
-        <div className="p-4 rounded-full border-2 border-neon-blue/50 hover:border-neon-pink/80"
+        <div className="p-4 rounded-full border-2 border-neon-blue/50 group-hover:border-neon-pink/80"
              style={{ boxShadow: `0 0 15px ${NEON_BLUE}40` }}>
           <Icon className="w-8 h-8" style={{ color: NEON_PINK }} />
         </div>
@@ -726,71 +623,142 @@ const App = () => {
     );
     const MailIcon = (props) => (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-        <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97-5.98a4 4 0 0 0-4.06 0L2 7" />
       </svg>
     );
 
     return (
-      <section id="contact" className="data-bg py-20 px-4 sm:px-8 lg:px-16 min-h-screen flex items-center pt-20">
-        <div className="max-w-4xl mx-auto w-full text-center">
-          <h2 className="font-orbitron text-4xl font-bold mb-10 text-center text-neon-blue border-b-2 border-neon-pink pb-3 shadow-text-sm">
-            // 06. LOO ÜHENDUS {/* LOO ÜHENDUS */}
+      <section id="contact" className="data-bg py-20 px-4 sm:px-8 lg:px-16 pt-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="font-orbitron text-4xl font-bold mb-10 text-neon-blue border-b-2 border-neon-pink pb-3 shadow-text-sm">
+            // 06. ESTABLISH CONNECTION
           </h2>
+          <GlassPanel className="p-8 sm:p-12 mb-8 flex flex-col items-center" style={{ animation: 'none', border: `1px solid ${NEON_PINK}30` }}>
+            <p className="font-rajdhani text-xl text-gray-200 mb-8">
+              Initiating secure transmission protocol. Let's collaborate to transform your data challenges into strategic solutions.
+            </p>
 
-          <GlassPanel className="p-8 sm:p-12">
-            <h3 className="font-orbitron text-3xl mb-8 text-neon-purple">Alusta Turvalist Edastust</h3> {/* Alusta Turvalist Edastust */}
-            <div className="flex justify-center space-x-6 sm:space-x-12 mb-10">
-              <ContactIcon Icon={GithubIcon} label="GitHub Portaal" link={GITHUB_URL} /> {/* GitHub Portaal */}
-              <ContactIcon Icon={LinkedinIcon} label="LinkedIn Võrgustik" link={LINKEDIN_URL} /> {/* LinkedIn Võrgustik */}
-              <ContactIcon Icon={MailIcon} label="Otsene E-post" link={`mailto:${EMAIL_ADDRESS}`} action={(e) => { e.preventDefault(); handleCopyEmail(); }} /> {/* Otsene E-post */}
+            <div className="flex justify-center space-x-6 sm:space-x-12 mb-8">
+              <ContactIcon
+                Icon={GithubIcon}
+                label="GitHub Log"
+                link={`https://github.com/${GITHUB_HANDLE}`}
+              />
+              <ContactIcon
+                Icon={LinkedinIcon}
+                label="LinkedIn Protocol"
+                link={`https://www.linkedin.com/in/${LINKEDIN_HANDLE}/`}
+              />
+              <ContactIcon
+                Icon={MailIcon}
+                label="Direct Email"
+                link="#"
+                action={handleCopyEmail}
+              />
             </div>
 
             <button
-              onClick={() => showMessage('Koostöö protokoll käivitatud!', 'success')} // Koostöö protokoll käivitatud!
-              className="font-orbitron tracking-widest text-lg px-10 py-4 rounded-full bg-gray-900 text-neon-pink transition duration-500 hover:bg-neon-pink hover:text-gray-900 animate-pulse-slow mt-8"
-              style={{ boxShadow: '0 0 20px #FF6B8B' }}
+              onClick={handleCopyEmail}
+              className="neon-border font-orbitron tracking-wider text-xl px-10 py-4 rounded-full bg-gray-900 text-neon-pink transition duration-500 hover:bg-neon-pink hover:text-gray-900 animate-pulse-slow"
             >
-              [ AKTIVEERI KOOSTÖÖ REŽIIM ✨ ] {/* AKTIVEERI KOOSTÖÖ REŽIIM */}
+              [ ACTIVATE COLLABORATION MODE ✨ ]
             </button>
-          </GlassPanel>
+            
+            {message && <Alert message={message.text} type={message.type} />}
 
+          </GlassPanel>
         </div>
-        {message && <Alert message={message.text} type={message.type} />}
+        <footer className="mt-20 text-center font-rajdhani text-xs text-gray-500">
+          <p>Data Stream Footer Protocol v1.0 | Designed by Gemini, Developed by Yogish Bakshi.</p>
+        </footer>
       </section>
     );
   };
 
 
-  const RootApp = () => (
-    <div className="min-h-screen bg-gray-900 text-white leading-relaxed antialiased">
-      <style>{customStyles}</style>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-      <Header />
-      <main className="font-rajdhani">
-        <HeroSection />
-        <AboutMe />
-        <Projects />
-        <Skills />
-        <Experience />
-        <Certifications />
-        <Contact />
-      </main>
-      <AIAssistant />
-    </div>
-  );
+  const RootApp = () => {
+    // Defines custom CSS styles within the component for a single-file application structure.
+    const customStyles = `
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap');
+      .font-orbitron { font-family: 'Orbitron', sans-serif; }
+      .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+      @keyframes neon-glow-pulse {
+        0%, 100% { box-shadow: 0 0 5px ${NEON_BLUE}, 0 0 10px ${NEON_PURPLE}, 0 0 15px ${NEON_BLUE}; }
+        50% { box-shadow: 0 0 10px ${NEON_PURPLE}, 0 0 20px ${NEON_PINK}, 0 0 30px ${NEON_PURPLE}; }
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+      }
+
+      .text-neon-blue { color: ${NEON_BLUE}; }
+      .text-neon-purple { color: ${NEON_PURPLE}; }
+      .text-neon-pink { color: ${NEON_PINK}; }
+
+      .neon-border {
+        border: 1px solid ${NEON_BLUE};
+        box-shadow: 0 0 5px ${NEON_BLUE};
+        transition: all 0.3s ease;
+      }
+      .neon-border:hover {
+        border-color: ${NEON_PINK};
+        box-shadow: 0 0 15px ${NEON_PINK};
+      }
+
+      .glass-panel {
+        background: rgba(10, 15, 30, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(74, 217, 232, 0.2);
+        border-radius: 12px;
+        transition: all 0.5s ease;
+        animation: neon-glow-pulse 5s infinite alternate;
+      }
+
+      .data-bg {
+        background: #000000;
+        background-image: radial-gradient(circle at 1px 1px, #0f172a 1px, transparent 0),
+                          radial-gradient(circle at 1px 1px, #1e293b 1px, transparent 0);
+        background-size: 10px 10px;
+        background-position: 0 0, 5px 5px;
+      }
+    `;
+
+    return (
+      <div className="min-h-screen bg-gray-900 text-white select-none">
+        <style>{customStyles}</style>
+        <Header />
+        <main className="pt-16">
+          <HeroSection />
+          <AboutMe />
+          <Projects />
+          <Certifications />
+          <Skills />
+          <Experience />
+          <Contact />
+        </main>
+        <AIAssistant />
+      </div>
+    );
+  };
 
   return <RootApp />;
 };
 
-// --- Deployment Entry Point ---
-// Parandus: Eemalda "import ReactDOM" ja kasuta globaalset ReactDOM-i
-// See koodiosa on ülioluline Reacti rakenduse käivitamiseks.
-const ReactDOM = window.ReactDOM;
+// --- FINAL DEPLOYMENT ENTRY POINT FIX ---
 const rootElement = document.getElementById('root');
-if (rootElement && ReactDOM) {
-    ReactDOM.createRoot(rootElement).render(
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>
-    );
+if (rootElement) {
+    // Dynamic import is the robust solution for Vercel/Cloudflare blank pages.
+    import('react-dom/client').then(({ createRoot }) => {
+        createRoot(rootElement).render(
+            <React.StrictMode>
+                <App />
+            </React.StrictMode>
+        );
+    }).catch(e => console.error("Failed to initialize React root:", e));
 }
+
+export default App;
