@@ -6,7 +6,7 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": { // <--- This section now correctly follows the comma after "scripts"
+  "dependencies": { 
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "chart.js": "^4.4.3",
