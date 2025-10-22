@@ -1,8 +1,11 @@
-module.exports = {
-  plugins: {
-    // This plugin is REQUIRED to process Tailwind directives and generate CSS
-    'tailwindcss': {},
-    // This plugin adds necessary vendor prefixes (e.g., -webkit-) for compatibility
-    'autoprefixer': {},
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
   },
-};
+  plugins: [],
+}
