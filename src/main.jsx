@@ -1,3 +1,42 @@
+// src/components/YourChartComponent.jsx
+
+import { Bar } from 'react-chartjs-2'; // Or Line, Pie, etc.
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// --- THIS IS THE CRITICAL FIX ---
+// You must register the components you want to use
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+// ---------------------------------
+
+// Now, you can define and export your component
+export const MyChart = () => {
+  const data = {
+    // ... your chart data
+  };
+
+  const options = {
+    // ... your chart options
+  };
+
+  return <Bar options={options} data={data} />;
+};
+
+export default MyChart;
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './index.css'; // <-- ADD THIS LINE
 ReactDOM.createRoot(document.getElementById('root')).render(
