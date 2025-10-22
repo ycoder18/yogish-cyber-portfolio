@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './index.css'; // <-- ADD THIS LINE
-
-import React from 'react'
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
 import ReactDOM from 'react-dom/client'
 // ...your other imports like App
 // --- GLOBAL CONSTANTS ---
